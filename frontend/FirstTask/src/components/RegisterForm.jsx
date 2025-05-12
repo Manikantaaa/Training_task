@@ -33,13 +33,12 @@ const RegisterForm = () => {
     }
 
     try {
-       const res =await axios.post('http://localhost:3000/api/register',data,
+       await axios.post('http://localhost:3000/api/register',data,
         {
           headers: {
             'Content-Type': 'multipart/form-data'
     }})
 
-      console.log(res.data.message);
       navigate('/');
     } catch (error) {
       console.error("Registration failed:", error);
@@ -68,6 +67,7 @@ const RegisterForm = () => {
         <option value="Developer">Developer</option>
         <option value="Tester">Tester</option>
       </select>
+        <label>Date of Birth</label>
 
       <input type="date" name="dob" value={formData.dob} onChange={handleChange} required />
 

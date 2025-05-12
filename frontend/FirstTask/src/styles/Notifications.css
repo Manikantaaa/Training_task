@@ -1,0 +1,71 @@
+.notifications-modal-body {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.create-btn {
+  padding: 10px;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  width: fit-content;
+}
+
+.create-btn:hover {
+  background-color: #218838;
+}
+
+.notifications-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.notification-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 15px;
+  background: #f4f4f4;
+  padding: 10px;
+  border-radius: 8px;
+}
+
+.notification-card img {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 5px;
+}
+
+.notification-card h3 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.notification-card p {
+  margin: 5px 0;
+  color: #555;
+}
+
+.notification-card button {
+  margin-right: 8px;
+  padding: 6px 10px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.notification-card button:last-child {
+  background-color: #dc3545;
+}
+
+.notification-card button:hover {
+  opacity: 0.9;
+}

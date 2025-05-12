@@ -16,9 +16,8 @@ const storage = multer.diskStorage({
   }
 });
  export const upload = multer({ storage });
-router.post('/register',upload.single('image'), async (req, res) => {
-  console.log('Uploaded file:', req.file);
 
+ router.post('/register',upload.single('image'), async (req, res) => {
   
   const sql = `INSERT INTO users 
   (name,email,phone,password, role,type,dob, image) 
@@ -26,7 +25,8 @@ router.post('/register',upload.single('image'), async (req, res) => {
   bcrypt.hash(req.body.password, 10, (err, hash) => {
       if(err)
        return res.json({Status: false, Error: "Hashing Error"})
-      const values = [
+       const image = req.file ? req.file.filename : null;
+ const values = [
           req.body.name,
           req.body.email,
           req.body.phone,
@@ -34,8 +34,7 @@ router.post('/register',upload.single('image'), async (req, res) => {
           req.body.role,
           req.body.type, 
           req.body.dob,
-          req.file.filename,
-      ]
+image      ]
       con.query(sql, [values], (err, result) => {
           if(err) return res.json({Status: false, Error: err.message})
           return res.json({Status: true,message:"user registered successfully"})

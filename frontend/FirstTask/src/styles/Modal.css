@@ -1,0 +1,102 @@
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 100vw;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+.modal-box {
+  background-color: #fff;
+  border-radius: 10px;
+  width: 90%;
+  max-width: 400px;
+  padding: 20px;
+  position: relative;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.modal-header h3 {
+  margin: 0;
+  font-size: 1.5rem;
+  color: #333;
+}
+
+.close-button {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #555;
+  cursor: pointer;
+}
+
+.close-button:hover {
+  color: #000;
+}
+
+.modal-content {
+  font-size: 1rem;
+  color: #444;
+  line-height: 1.6;
+}
+
+.modal-box input[type="text"],
+.modal-box textarea {
+  width: 90%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+  margin-top: 5px;
+}
+
+.modal-box textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.modal-box input[type="file"] {
+  font-size: 14px;
+  margin-top: 8px;
+  width: 90%;
+}
+
+.modal-box button {
+  padding: 10px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  margin-top: 10px;
+}
+
+.modal-box button:hover {
+  background-color: #0056b3;
+}
+
+@keyframes fadeIn {
+  from {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
