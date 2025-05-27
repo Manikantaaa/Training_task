@@ -17,38 +17,52 @@ const storage = multer.diskStorage({
 });
  export const upload = multer({ storage });
 
- router.post('/register',upload.single('image'), async (req, res) => {
-  
-  const sql = `INSERT INTO users 
-  (name,email,phone,password, role,type,dob, image) 
-  VALUES (?)`;
-  bcrypt.hash(req.body.password, 10, (err, hash) => {
-      if(err)
-       return res.json({Status: false, Error: "Hashing Error"})
-       const image = req.file ? req.file.filename : null;
- const values = [
-          req.body.name,
-          req.body.email,
-          req.body.phone,
-          hash,
-          req.body.role,
-          req.body.type, 
-          req.body.dob,
-image      ]
-      con.query(sql, [values], (err, result) => {
-          if(err) return res.json({Status: false, Error: err.message})
-          return res.json({Status: true,message:"user registered successfully"})
-      })
-  })
-})
+router.post('/register', upload.single('image'), async (req, res) => {
+  try {
+    const { name, email, phone, password, role, type, dob } = req.body;
+    const image = req.file ? req.file.filename : null;
+
+
+    con.query('SELECT * FROM users WHERE email = ?', [email], async (err, result) => {
+      if (err) {
+        return res.status(500).json({ error: "Database query error" });
+      }
+
+      if (result.length > 0) {
+        return res.status(409).json({ error: "Email already registered" }); // 409 = Conflict
+      }
+
+      const hashedPassword = await bcrypt.hash(password, 10);
+
+      const sql = `INSERT INTO users (name, email, phone, password, role, type, dob, image) 
+                   VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
+
+      con.query(
+        sql,
+        [name, email, phone, hashedPassword, role, type, dob, image],
+        (insertErr, insertResult) => {
+          if (insertErr) {
+            console.error("Insert error:", insertErr);
+            return res.status(500).json({ error: "Failed to register" });
+          }
+
+          res.status(201).json({ message: "User registered successfully" });
+        }
+      );
+    });
+  } catch (error) {
+    console.error("Registration error:", error);
+    res.status(500).json({ error: "Server error during registration" });
+  }
+});
+
+
 
 
 
 router.post('/login', async (req, res) => {
   const { email, password } = req.body;
-  if (!email || !password) {
-    return res.status(400).json({ message: 'Email and password are required' });
-  }
+  
   try {
    con.query('SELECT * FROM users WHERE email = ?', [email],async (err, result) => {
     if (err) return res.json({ loginStatus: false, Error: "Query error" });
@@ -59,12 +73,12 @@ router.post('/login', async (req, res) => {
     if (!isMatch) {
       return res.status(400).json({ message: 'Invalid credentials' });
     }
-    const token = jwt.sign({ id: user.id, role: user.role }, JWT_SECRET, { expiresIn: '1d' });
+    const token = jwt.sign({ id: user.id, role: user.role.toLowerCase() }, JWT_SECRET, { expiresIn: '1d' });
     
     return res.json({ user, token});
   }
     else {
-      return res.json({ loginStatus: false, Error:"wrong email or password" });
+      return res.json({ loginStatus: false, message: 'Invalid credentials'  });
   }
   } )
 }

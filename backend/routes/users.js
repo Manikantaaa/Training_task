@@ -2,6 +2,7 @@ import express  from 'express';
 import con from '../db.js';
 import authMiddleware from '../middleware/authMiddleware.js';
 import {upload} from './auth.js'
+
 const router = express.Router();
 
 
@@ -17,7 +18,6 @@ router.get('/', authMiddleware, (req, res) => {
   );
 });
 
-
 router.get('/employees',  (req, res) => {
   try {
     con.query(
@@ -29,6 +29,24 @@ router.get('/employees',  (req, res) => {
     );
   } catch (err) {
     res.status(500).json({ message: 'Server error' });
+  }
+});
+
+router.get("/birthdays", authMiddleware, async (req, res) => {
+  try {
+    const today = new Date().toISOString().slice(0, 10);
+
+     await con.query(
+      `SELECT id, name FROM users WHERE DATE_FORMAT(dob, '%m-%d') = DATE_FORMAT(?, '%m-%d')`,
+      [today],
+    (err, result) => {
+        if (err) return res.status(500).json({ message: 'Database error' });
+        res.json(result);
+      }
+    );
+  } catch (err) {
+    console.error("Birthday fetch error:", err);
+    res.status(500).json({ message: "Error fetching birthdays" });
   }
 });
 
@@ -45,12 +63,37 @@ router.post('/notifications', upload.single('image'), (req, res) => {
   );
 });
 
-router.get('/notifications', (req, res) => {
-  con.query('SELECT * FROM notifications ORDER BY created_at DESC', (err, results) => {
-    if (err) return res.status(500).json({ error: err.message });
-    res.json(results);
-  });
+router.get('/notifications', async(req, res) => {
+   try {
+     await con.query('SELECT * FROM notifications ORDER BY created_at DESC',(err, result) => {
+    res.json(result);
+   })
+  } catch (error) {
+    console.error('Error fetching notifications:', error.message);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
 });
+
+router.get("/getbyid/:id",(req,res)=>{
+  const {id}=req.params;
+  try{
+    con.query("SELECT name, email, phone,role, type, dob,image FROM users WHERE id ="+id,
+      (err,result)=>
+      {
+              if (err) return res.status(500).json({ message: 'Database error' });
+res.json(result);
+      }
+)
+  }
+  catch(err){
+        res.status(500).json({ message: 'Server error' });
+
+  }
+});
+
+
+
+
 
 router.put('/:id', authMiddleware,upload.single('image'),(req, res) => {
 

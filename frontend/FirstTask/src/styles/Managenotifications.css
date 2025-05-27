@@ -1,0 +1,115 @@
+.notifications-container {
+  width: 100%;
+  margin: 50px auto;
+  padding: 30px;
+  /* background: #ffffff; */
+  border-radius: 12px;
+  /* box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); */
+}
+
+.create-btn {
+  background-color: #4CAF50;
+  color: white;
+  padding: 12px 0;
+  margin-bottom: 25px;
+  border: none;
+  width: 190px;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.create-btn:hover {
+  background-color: #43a047;
+}
+
+.notifications-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fafafa;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.notifications-table th,
+.notifications-table td {
+  padding: 14px 18px;
+  text-align: left;
+}
+
+.notifications-table thead {
+  background-color: #f5f5f5;
+}
+
+.notifications-table th {
+  font-weight: 700;
+  color: #333;
+  border-bottom: 2px solid #e0e0e0;
+}
+
+.notifications-table td {
+  /* vertical-align: middle; */
+  border-bottom: 1px solid #eee;
+  padding-bottom: 0px !important;
+  color: #444;
+}
+
+.notifications-table tr:nth-child(even) {
+  background-color: #fdfdfd;
+}
+
+.notification-image {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 1px solid #ccc;
+}
+
+.n-acations {
+  display: flex;
+  gap: 10px;
+}
+
+.notifications-table button {
+  padding: 8px 14px;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.notifications-table button:hover {
+  transform: scale(1.05);
+}
+
+.btn-edit {
+  background-color: #1976d2;
+  color: white;
+}
+
+.btn-edit:hover {
+  background-color: #1565c0;
+}
+
+.btn-delete {
+  background-color: #e53935;
+  color: white;
+}
+
+.btn-delete:hover {
+  background-color: #c62828;
+}
+
+.empty-message {
+  text-align: center;
+  padding: 25px;
+  font-size: 1rem;
+  color: #777;
+  font-style: italic;
+}

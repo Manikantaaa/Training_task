@@ -12,13 +12,15 @@ export const AuthProvider = ({ children }) => {
   }, [user, token]);
 
   const login = (userData, token) => {
-    setUser(userData);
+        setUser(userData);
     setToken(token);
     localStorage.setItem('user', JSON.stringify(userData));
     localStorage.setItem('token', token);
   };
 
   const logout = () => {
+const confirmDelete = confirm("Are you sure you want to logout?");
+  if (!confirmDelete) return;
     setUser(null);
     setToken(null);
     localStorage.removeItem('user');

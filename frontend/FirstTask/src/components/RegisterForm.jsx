@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import '../styles/Registration.css'; 
+import '../styles/Registration.css';
 import axios from 'axios';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const RegisterForm = () => {
   const [formData, setFormData] = useState({
@@ -14,69 +15,191 @@ const RegisterForm = () => {
     dob: '',
     image: ''
   });
+
+  const [imagePreview, setImagePreview] = useState(null);
+  const [errors, setErrors] = useState({});
   const navigate = useNavigate();
 
-  const handleChange = (e) => {
-    const { name, value, files } = e.target;
-    if (name === 'image') {
-      setFormData({ ...formData, image: files[0] });
+  const nameRef = useRef(null);
+  const emailRef = useRef(null);
+  const phoneRef = useRef(null);
+  const passwordRef = useRef(null);
+  const roleRef = useRef(null);
+  const typeRef = useRef(null);
+  const dobRef = useRef(null);
+  const imageRef = useRef(null);
+
+ 
+
+
+const handleChange = (e) => {
+  const { name, value, files } = e.target;
+
+  if (name === 'image') {
+    const file = files[0];
+    setFormData({ ...formData, image: file });
+    setImagePreview(URL.createObjectURL(file));
+    setErrors((prev) => ({ ...prev, image: '' }));
+  } else {
+    setFormData({ ...formData, [name]: value });
+
+    let errorMsg = '';
+
+    if (name === 'phone') {
+      if (!value.trim()) errorMsg = 'Phone number is required';
+      else if (!/^\d{10}$/.test(value)) errorMsg = 'Phone number must be 10 digits';
+    }
+
+    if (name === 'password') {
+      if (!value.trim()) errorMsg = 'Password is required';
+      else if (value.length < 6) errorMsg = 'Password must be at least 6 characters';
+    }
+
+    if (name === 'email') {
+      if (!value.trim()) errorMsg = 'Email is required';
+      else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) errorMsg = 'Valid email is required';
+    }
+
+    setErrors((prev) => ({ ...prev, [name]: errorMsg }));
+  }
+};
+
+
+const validate = () => {
+  const newErrors = {};
+  let firstInvalid = null;
+
+  const addError = (field, message) => {
+    newErrors[field] = message;
+    if (!firstInvalid) firstInvalid = field; 
+  };
+
+  if (!formData.name.trim()) addError("name", "Name is required");
+  if (!formData.email.trim()) addError("email", "Email is required");
+  else if (!formData.email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) addError("email", "Valid email is required");
+
+  if (!formData.phone.trim()) addError("phone", "Phone number is required");
+  else if (!formData.phone.match(/^\d{10}$/)) addError("phone", "Phone number must be 10 digits");
+
+  if (!formData.password.trim()) addError("password", "Password is required");
+  else if (formData.password.length < 6) addError("password", "Password must be at least 6 characters");
+
+  if (!formData.role) addError("role", "Role is required");
+  if (formData.role === 'employee' && !formData.type) addError("type", "Type is required for employees");
+
+  if (!formData.dob) addError("dob", "Date of birth is required");
+  if (!formData.image) addError("image", "Image is required");
+
+  setErrors(newErrors);
+  return { isValid: Object.keys(newErrors).length === 0, firstInvalid };
+};
+
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  const { isValid, firstInvalid } = validate();
+
+  if (!isValid) {
+    const focusMap = {
+      name: nameRef,
+      email: emailRef,
+      phone: phoneRef,
+      password: passwordRef,
+      role: roleRef,
+      type: typeRef,
+      dob: dobRef,
+      image: imageRef
+    };
+
+    
+      focusMap[firstInvalid]?.current?.focus();
+    
+    return;
+  }
+
+  const data = new FormData();
+  for (let key in formData) {
+    data.append(key, formData[key]);
+  }
+
+  try {
+    await axios.post(`${API_BASE_URL}/register`, data, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    });
+    navigate('/'); 
+  } catch (error) {
+    if (error.response && error.response.status === 409) {
+      setErrors((prev) => ({ ...prev, email: error.response.data.error }));
+      emailRef.current?.focus(); 
     } else {
-      setFormData({ ...formData, [name]: value });
-    }
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const data = new FormData();
-    for (let key in formData) {
-      data.append(key, formData[key]);
-    }
-
-    try {
-       await axios.post('http://localhost:3000/api/register',data,
-        {
-          headers: {
-            'Content-Type': 'multipart/form-data'
-    }})
-
-      navigate('/');
-    } catch (error) {
       console.error("Registration failed:", error);
+      alert("Something went wrong. Please try again.");
     }
-  };
+  }
+};
+
+
+
+
+
+
+  const today = new Date().toISOString().split("T")[0];
 
   return (
     <form className="register-container" onSubmit={handleSubmit}>
       <h2>Register</h2>
-      <input name="name" value={formData.name} onChange={handleChange} placeholder="Name" required />
-      <input name="email" type="email" value={formData.email} onChange={handleChange} placeholder="Email" required />
-      <input name="phone" value={formData.phone} onChange={handleChange} placeholder="Phone Number" required />
-      <input name="password" type="password" value={formData.password} onChange={handleChange} placeholder="Password" required />
-      
-      <div className="radio-group">
-        <label>
-          <input type="radio" name="role" value="admin" checked={formData.role === 'admin'} onChange={handleChange} required/> Admin
+
+      <label>Name:</label>
+      <input ref={nameRef} name="name" type="text" value={formData.name} onChange={handleChange} placeholder="Enter Name" />
+      {errors.name && <span className="error">{errors.name}</span>}
+
+      <label>Email:</label>
+      <input ref={emailRef} name="email" type="email" value={formData.email} onChange={handleChange} placeholder="Enter Email" />
+      {errors.email && <span className="error">{errors.email}</span>}
+
+      <label>Phone Number:</label>
+      <input ref={phoneRef} name="phone" type="number" value={formData.phone} onChange={handleChange} placeholder="Enter Phone Number" />
+      {errors.phone && <span className="error">{errors.phone}</span>}
+
+      <label>Password:</label>
+      <input ref={passwordRef} name="password" type="password" value={formData.password} onChange={handleChange} placeholder="Enter Password" />
+      {errors.password && <span className="error">{errors.password}</span>}
+
+      <label>Role:</label>
+      <div className="radio-group" ref={roleRef}>
+        <label className="radio-option">
+          <input type="radio" name="role" value="admin" checked={formData.role === 'admin'} onChange={handleChange} /> Admin
         </label>
-        <label>
+        <label className="radio-option">
           <input type="radio" name="role" value="employee" checked={formData.role === 'employee'} onChange={handleChange} /> Employee
         </label>
       </div>
+      {errors.role && <span className="error">{errors.role}</span>}
 
-      <select name="type" value={formData.type} onChange={handleChange} disabled={formData.role === 'admin'} required>
-      <option value="">Select role type</option>
+      <label>Type:</label>
+      <select name="type" ref={typeRef} value={formData.type} onChange={handleChange} disabled={formData.role === 'admin'}>
+        <option value="">Select role type</option>
         <option value="Developer">Developer</option>
         <option value="Tester">Tester</option>
       </select>
-        <label>Date of Birth</label>
+      {errors.type && <span className="error">{errors.type}</span>}
 
-      <input type="date" name="dob" value={formData.dob} onChange={handleChange} required />
+      <label>Date of Birth:</label>
+      <input ref={dobRef} type="date" name="dob" value={formData.dob} onChange={handleChange} max={today} />
+      {errors.dob && <span className="error">{errors.dob}</span>}
 
-      <div className="file-input">
-        <label>Select Image</label>
-        <input type="file" name="image" accept="image/*" onChange={handleChange} required />
-      </div>
+      <label>Select Image:</label>
+      <input ref={imageRef} type="file" name="image" accept="image/*" onChange={handleChange} />
+      {errors.image && <span className="error">{errors.image}</span>}
 
-      <button type="submit">Register</button>
+      {imagePreview && (
+        <div className="image-preview">
+          <img src={imagePreview} alt="Preview" />
+        </div>
+      )}
+
+<button type="submit" >Register</button>
 
       <p className="link-text">
         Already have an account? <Link to="/">Login here</Link>

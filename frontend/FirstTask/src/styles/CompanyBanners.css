@@ -1,0 +1,126 @@
+.container {
+  max-width: 1200px;
+  margin: 50px auto;
+  padding: 20px;
+  text-align: center;
+}
+
+.dropzone {
+  border: 2px dashed #ccc;
+  border-radius: 10px;
+  padding: 30px;
+  text-align: center;
+  margin: 0 auto 20px auto;
+  background-color: #f9f9f9;
+  transition: border 0.3s ease;
+  max-width: 1040px;      
+  min-width: 900px;      
+position: relative;
+cursor: pointer;
+}
+
+/* .upload-icon {
+  margin-bottom: 1px;
+} */
+
+.banner-preview-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+  /* max-height: 250px; */
+  /* overflow-y: auto; */
+  /* border: 1px solid #ddd; */
+  /* padding: 10px; */
+  background: #fff;
+}
+
+.banner-box {
+  position: relative;
+  width: 250px ;
+  height: 90px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: 0 0 5px rgba(0,0,0,0.1);
+  overflow: hidden;
+  transition: transform 0.2s ease;
+}
+
+
+.banner-box img {
+  width: 100%;
+  height: 100%;
+  
+}
+
+.banner-box.hidden-banner {
+  opacity: 0.4 !important;
+  border-color: red;
+}
+
+
+
+
+.banner-box button {
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  border: none;
+  border-radius: 50%;
+  color: white;
+  cursor: pointer;
+  font-size: 14px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.banner-box button.delete-btn {
+  top: 1px;
+  right: 3px;
+  background: #f44336;
+}
+
+
+
+
+.toggle-btn {
+  position: absolute;
+  top: 1px;
+  left: 3px;
+  padding: 4px;
+  font-size: 14px;
+  border-radius: 50%;
+  color: white;
+  background-color: #555;
+  border: none;
+}
+
+.toggle-btn.hidden {
+  background-color: blue;
+  opacity: 0.6;
+  color: white;
+font-size: 22px;
+}
+
+
+
+.error-box {
+  /* background: #ffe5e5; */
+  color: #c00;
+  padding: 10px;
+  border-radius: 4px;
+  margin-bottom: 10px;
+}
+
+.save-button {
+  margin-top: 20px;
+  padding: 10px 20px;
+  background: #007bfc;
+  color: white;
+  border: none;
+  width: 1040px;
+  border-radius: 4px;
+  cursor: pointer;
+}
